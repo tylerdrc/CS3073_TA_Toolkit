@@ -1,5 +1,6 @@
 * Lab 2, CS 3073, Spring 2018
-** Step 1%
+Due: April 12, 2018 at 11:59PM
+** Step 1
 [[https://alexcabal.com/creating-the-perfect-gpg-keypair/][Creating the perfect GPG keypair]] is a detailed and up-to-date
    article that will guide you through creating your own GPG
    keypair. Please create the GPG according to the article.
@@ -23,11 +24,11 @@ Please try the following steps before generating the key pair again:
   sudo rngd -r /dev/urandom
 #+END_SRC
 
-** Step2
+** Step 2
 Export your public key created in step one as
 your_TU_id.public.gpg-key (for example, jqs123.public.gpg-key)
 
-** Step3
+** Step 3
 Create a message named as your_TU_id.txt (for example, jqs123.txt)
 which include three lines as follow (your name, your id, your netid):
 #+BEGIN_SRC
@@ -36,18 +37,78 @@ John Q Student
 jqs123
 #+END_SRC
 
-** Step4
+** Step 4
 Sign the .txt file you just created in Step3 (for example, jqs123.txt)
 with your private key using gpg according to [[https://www.gnupg.org/gph/en/manual/x135.html][The GNU Privacy Handbook]].
 #+BEGIN_SRC shell
   gpg --output jqs123.txt.sig --sign jqs123.txt
 #+END_SRC
 
-** Step5
-Upload the following three files (the jqs123 here should be your own
-TU NetID) to Harvey:
+** Step 6
+Here you will create an encrypted message for Jerry, the lab grader. You must first find Jerry's public key, then verify the fingerprint, then encrypt the message.
+
+Create a file called secret-message-jqs123.txt (replacing jqs123 with your TU Net ID) that includes only the two lines
+
+"The meaning of life is 42.
+Name: John Q Student
+"
+No quotes in the file itself, and replace with your name.
+
+*** Find Jerry's GPG public key
+#+BEGIN_SRC shell
+  [user@email ~]$ gpg --keyserver pool.sks-keyservers.net --search-keys zic337@utulsa.edu
+  gpg: searching for "zic337@utulsa.edu" from hkp server pool.sks-keyservers.net
+  (1)	Jerry Chai <zic337@utulsa.edu>
+            4096 bit RSA key D5E661BE, created: 2017-02-08, expires: 2019-02-08
+  Keys 1-1 of 1 for "zic337@utulsa.edu".  Enter number(s), N)ext, or Q)uit > 1
+  gpg: requesting key D5E661BE from hkp server pool.sks-keyservers.net
+  gpg: lookup_hashtable failed: eof
+  gpg: key D5E661BE: public key "Jerry Chai <zic337@utulsa.edu>" imported
+  gpg: Total number processed: 1
+  gpg:               imported: 1  (RSA: 1)
+#+END_SRC
+
+*** Verify the GPG fingerprint
+One should always verify the fingerprint of the GPG before trusting
+it. The fingerprint should be obtained from a trusted channel (for
+example, through web-of-trust, through the owner's personal website
+with HTTPS connection enabled, or through a business card the owner
+gave you.)
+
+For Lab 2, the fingerprint of Jerry's public key is given here in the assignment.
+#+BEGIN_SRC shell
+  [user@email ~]$ gpg --fingerprint zic337@utulsa.edu
+  pub   4096R/D5E661BE 2017-02-08 [expires: 2019-02-08]
+        Key fingerprint = 9172 A93E 82BA 3841 FFAC  6266 8638 1DC8 D5E6 61BE
+  uid                  Jerry Chai <zic337@utulsa.edu>
+  sub   4096R/44805C51 2017-02-08 [expires: 2019-02-08]
+#+END_SRC
+
+*** Encrypt the message
+#+BEGIN_SRC shell
+  [user@email ~]$ gpg -r zic337@utulsa.edu --encrypt-file secret-message-jqs123.txt
+  gpg: lookup_hashtable failed: eof
+  gpg: lookup_hashtable failed: eof
+  gpg: 44805C51: There is no assurance this key belongs to the named user
+
+  pub  4096R/44805C51 2017-02-08 Jerry Chai <zic337@utulsa.edu>
+   Primary key fingerprint: 9172 A93E 82BA 3841 FFAC  6266 8638 1DC8 D5E6 61BE
+        Subkey fingerprint: 2AC0 259D A78A 620F 4265  A529 D2F7 6A9C 4480 5C51
+
+  It is NOT certain that the key belongs to the person named
+  in the user ID.  If you *really* know what you are doing,
+  you may answer the next question with yes.
+
+  Use this key anyway? (y/N) y
+#+END_SRC
+
+** Step 6
+Compress the following files (the jqs123 here should be your own
+TU NetID) to a file named jqs123_lab2.zip to Harvey:
 #+BEGIN_SRC
-jqs123.public.gpg-kep
+jqs123.public.gpg-key
 jqs123.txt
 jqs123.txt.sig
+secret-message-jqs123.txt
+secret-message-jqs123.txt.gpg
 #+END_SRC
